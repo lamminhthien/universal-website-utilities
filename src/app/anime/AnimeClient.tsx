@@ -67,9 +67,10 @@ export default function AnimeClient({ initial }: { initial: ApiResp }) {
                 </a>
               </div>
               {m.description ? (
-                <p className="text-sm text-white/80 mt-1 line-clamp-3">
-                  {m.description}
-                </p>
+                <p
+                  className="text-sm text-white/80 mt-1 line-clamp-4"
+                  dangerouslySetInnerHTML={{ __html: m.description }}
+                />
               ) : null}
             </div>
           </Card>
