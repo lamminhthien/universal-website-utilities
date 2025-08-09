@@ -5,6 +5,8 @@ export type AnimeItem = {
   trailerSite?: string;
   coverImage?: string;
   updatedAt?: number;
+  description?: string;
+  thumbnail?: string;
 };
 
 const ANILIST_URL = "https://graphql.anilist.co";
@@ -22,6 +24,7 @@ const query = `
         siteUrl
         updatedAt
         title { romaji english native }
+        description(asHtml: false)
         trailer { id site thumbnail }
         coverImage { large extraLarge }
       }
@@ -32,6 +35,7 @@ const query = `
 type AniMedia = {
   siteUrl?: string;
   title?: { romaji?: string; english?: string; native?: string };
+  description?: string;
   trailer?: { id?: string; site?: string; thumbnail?: string };
   coverImage?: { large?: string; extraLarge?: string };
   updatedAt?: number;
@@ -45,7 +49,7 @@ export async function fetchAnime(page = 1, perPage = 12): Promise<{ items: Anime
       body: JSON.stringify({ query, variables: { page, perPage } }),
       next: { revalidate: 1800 },
     });
-  const json = await res.json();
+    const json = await res.json();
     const info = json?.data?.Page?.pageInfo as { hasNextPage?: boolean } | undefined;
     const list = (json?.data?.Page?.media ?? []) as AniMedia[];
     const items = list.map((m: AniMedia) => {
@@ -57,6 +61,8 @@ export async function fetchAnime(page = 1, perPage = 12): Promise<{ items: Anime
         trailerSite: m?.trailer?.site as string | undefined,
         coverImage: m?.coverImage?.extraLarge || m?.coverImage?.large,
         updatedAt: m?.updatedAt,
+        description: m?.description,
+        thumbnail: m?.trailer?.thumbnail || m?.coverImage?.extraLarge || m?.coverImage?.large,
       } as AnimeItem;
     });
     // Ensure latest on top regardless
