@@ -4,6 +4,7 @@ export type TravelItem = {
   description?: string;
   source: string;
   thumbnail?: string;
+  categories?: string[];
 };
 
 // A few reputable travel RSS sources.
@@ -43,7 +44,10 @@ function parseRss(xml: string, sourceName: string): TravelItem[] {
     const url = extract("link", raw) || "#";
     const description = extract("description", raw) || extract("content:encoded", raw);
     const thumbnail = extractThumb(raw, description);
-    return { title, url, description, source: sourceName, thumbnail } as TravelItem;
+    const cats = Array.from(raw.matchAll(/<category>([\s\S]*?)<\/category>/gi)).map((m) =>
+      (m[1] || "").replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim()
+    );
+    return { title, url, description, source: sourceName, thumbnail, categories: cats } as TravelItem;
   });
 }
 
@@ -63,9 +67,36 @@ export async function fetchTravelArticles(): Promise<TravelItem[]> {
     })
   );
   const flat = results.flat();
+  
+  // Heuristic filters to keep destination/place stories and exclude transport/lodging/booking content
+  const EXCLUDE = [
+    "hotel", "resort", "hostel", "airline", "airport", "flight", "fare", "lounge",
+    "points", "miles", "credit card", "deal", "sale", "booking", "bookings", "rental car",
+    "car rental", "cruise", "ship", "train review", "bus", "insurance", "covid", "passport",
+  ];
+  const INCLUDE = [
+    "guide", "itinerary", "things to do", "what to do", "where to", "best", "top",
+    "destination", "neighborhood", "city", "town", "village", "island", "beach", "coast",
+    "mountain", "alps", "national park", "park", "temple", "museum", "castle", "lake", "river",
+    "valley", "desert", "canyon", "forest", "garden", "harbour", "harbor", "old town",
+    "district", "quarter", "trail", "hike", "waterfall", "bay", "fjord",
+  ];
+
+  function isDestination(it: TravelItem): boolean {
+    const text = ((it.title || "") + " " + (it.description || "")).toLowerCase();
+    if (EXCLUDE.some((kw) => text.includes(kw))) return false;
+    if (it.categories?.some((c) => /destinations?|city|guide|travel|europe|asia|africa|america|australia|islands?/i.test(c))) return true;
+    if (INCLUDE.some((kw) => text.includes(kw))) return true;
+    // Heuristic: titles with ", Country" or " in City"
+    if (/,\s*[A-Z][a-z]+/.test(it.title)) return true;
+    if (/\bin\s+[A-Z][A-Za-z\-\s]+/.test(it.title)) return true;
+    return false;
+  }
+
+  const destinationOnly = flat.filter(isDestination);
   // Deduplicate by title+url
   const seen = new Set<string>();
-  const unique = flat.filter((a) => {
+  const unique = destinationOnly.filter((a) => {
     const key = (a.title || "") + (a.url || "");
     if (seen.has(key)) return false;
     seen.add(key);
