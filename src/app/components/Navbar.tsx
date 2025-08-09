@@ -20,7 +20,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 backdrop-blur bg-white/30 border-b border-white/10">
       <div className="container mx-auto px-4 h-14 flex items-center gap-4">
         <Link href="/" className="font-semibold tracking-wide text-black drop-shadow-md">
-          Universal Utilities
+          Universal Website Utilities
         </Link>
         <nav className="ml-auto flex items-center gap-3 overflow-x-auto">
           {links.map((l) => {

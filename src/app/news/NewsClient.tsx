@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Card from "../components/Card";
 import type { Article } from "@/lib/news";
 
@@ -7,21 +7,46 @@ export default function NewsClient({ initial }: { initial: Article[] }) {
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<Article[]>(initial);
   const [loading, setLoading] = useState(false);
+  const [hasNext, setHasNext] = useState(true);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const sorted = useMemo(() => [...items].sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)), [items]);
+  const sorted = useMemo(
+    () => [...items].sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)),
+    [items]
+  );
 
   async function loadMore() {
-    if (loading) return;
+    if (loading || !hasNext) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/news?page=${page + 1}`);
       const data = (await res.json()) as { articles?: Article[] };
-      setItems((prev) => [...prev, ...(data.articles || [])]);
-      setPage((p) => p + 1);
+      const nextItems = data.articles || [];
+      if (nextItems.length === 0) {
+        setHasNext(false);
+      } else {
+        setItems((prev) => [...prev, ...nextItems]);
+        setPage((p) => p + 1);
+      }
     } finally {
       setLoading(false);
     }
   }
+
+  // Infinite scroll observer
+  useEffect(() => {
+    if (!hasNext) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { root: null, rootMargin: "200px", threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNext, page, loading]);
 
   return (
     <div className="space-y-6">
@@ -38,14 +63,12 @@ export default function NewsClient({ initial }: { initial: Article[] }) {
           </a>
         ))}
       </div>
+
+      {/* Sentinel + status */}
+      <div ref={sentinelRef} className="h-6" />
       <div className="flex justify-center">
-        <button
-          onClick={loadMore}
-          className="px-4 py-2 rounded bg-white/10 hover:bg-white/20 border border-white/10 disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? "Đang tải..." : "Tải thêm"}
-        </button>
+        {loading && <div className="text-black/60 text-sm">Đang tải…</div>}
+        {!hasNext && <div className="text-black/50 text-sm">Không còn tin.</div>}
       </div>
     </div>
   );

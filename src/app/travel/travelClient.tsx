@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Card from "../components/Card";
 import Image from "next/image";
 
@@ -24,6 +25,7 @@ export default function TravelClient() {
   const [loading, setLoading] = useState(false);
   const [loadedOnce, setLoadedOnce] = useState(false);
   const [hasNext, setHasNext] = useState(true);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (loadedOnce) return;
@@ -39,7 +41,6 @@ export default function TravelClient() {
   }, [loadedOnce]);
 
   const fallback = (q: string) => `https://source.unsplash.com/800x600/?${encodeURIComponent(q)}`;
-  // Sort newest-first if we can infer timestamps (approx: from URLs or leave as is)
   const sorted = useMemo(() => items, [items]);
 
   async function loadMore() {
@@ -52,69 +53,73 @@ export default function TravelClient() {
     setLoading(false);
   }
 
+  // Infinite scroll observer
+  useEffect(() => {
+    if (!hasNext) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { root: null, rootMargin: "200px", threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNext, page, loading, loadMore]);
+
   return (
     <div className="space-y-6">
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sorted.length === 0 && (
-          <Card>
-            <div className="text-black/80">Đang tải...</div>
-          </Card>
-        )}
-        {sorted.map((it, i) => {
-          const img = it.thumbnail || fallback(it.title || "điểm đến du lịch");
-          return (
-            <Card key={it.url + i}>
-              <a href={it.url} target="_blank" rel="noopener noreferrer">
-                <div className="relative w-full h-56 mb-3 overflow-hidden rounded-md">
-                  <Image
-                    src={img}
-                    alt={it.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-500 hover:scale-105"
-                    priority={i < 6}
-                    unoptimized={!img.includes("images.unsplash.com")}
-                  />
-                </div>
-                <div className="font-semibold line-clamp-2">{it.title}</div>
-                <div className="text-xs text-black/60 mt-1">{it.source}</div>
-                {it.description && (
-                  <p className="text-sm text-black/70 mt-1 line-clamp-3" dangerouslySetInnerHTML={{ __html: it.description }} />
-                )}
-              </a>
-              <div className="mt-3 flex gap-2">
-                <a
-                  className="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 border border-white/10"
-                  href={`https://www.google.com/search?q=${encodeURIComponent(it.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Google
-                </a>
-                <a
-                  className="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 border border-white/10"
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Maps
-                </a>
+        {sorted.map((it, idx) => (
+          <Card key={it.url + idx}>
+            <a href={it.url} target="_blank" rel="noopener noreferrer" className="block">
+              <div className="aspect-video w-full rounded-md overflow-hidden bg-black/5">
+                <Image
+                  src={it.thumbnail || fallback(it.title)}
+                  alt={it.title}
+                  width={800}
+                  height={450}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </Card>
-          );
-        })}
+              <div className="font-semibold line-clamp-2">{it.title}</div>
+              <div className="text-xs text-black/60 mt-1">{it.source}</div>
+              {it.description && (
+                <p
+                  className="text-sm text-black/70 mt-1 line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: it.description }}
+                />
+              )}
+            </a>
+            <div className="mt-3 flex gap-2">
+              <a
+                className="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 border border-white/10"
+                href={`https://www.google.com/search?q=${encodeURIComponent(it.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Google
+              </a>
+              <a
+                className="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 border border-white/10"
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Maps
+              </a>
+            </div>
+          </Card>
+        ))}
       </div>
-      {hasNext && (
-        <div className="flex justify-center">
-          <button
-            onClick={loadMore}
-            className="px-4 py-2 rounded bg-white/10 hover:bg-white/20 border border-white/10 disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? "Đang tải..." : "Tải thêm"}
-          </button>
-        </div>
-      )}
+
+      {/* Sentinel + status */}
+      <div ref={sentinelRef} className="h-6" />
+      <div className="flex justify-center">
+        {loading && <div className="text-black/60 text-sm">Đang tải…</div>}
+        {!hasNext && <div className="text-black/50 text-sm">Hết kết quả.</div>}
+      </div>
     </div>
   );
 }
