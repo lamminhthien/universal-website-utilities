@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #06080f;
+  --foreground: #e8f7ff;
+  --neon-1: #00f0ff;
+  --neon-2: #8a2be2;
+  --neon-3: #ff00d4;
+  --neon-4: #00ffa3;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Tailwind v4 variables set from fonts in layout via CSS vars */
 
 body {
-  background: var(--background);
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(0, 255, 163, 0.12), transparent 60%),
+              radial-gradient(800px 500px at 110% 10%, rgba(0, 240, 255, 0.12), transparent 60%),
+              radial-gradient(1000px 600px at 50% 120%, rgba(255, 0, 212, 0.14), transparent 60%),
+              var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui;
+}
+
+.neon-bg::before {
+  content: "";
+  position: fixed;
+  inset: -20% -10% -10% -10%;
+  pointer-events: none;
+  background: radial-gradient(600px 400px at 10% 10%, rgba(0, 255, 163, 0.07), transparent 60%),
+              radial-gradient(800px 500px at 90% 0%, rgba(0, 240, 255, 0.07), transparent 60%),
+              radial-gradient(900px 500px at 50% 110%, rgba(138, 43, 226, 0.10), transparent 60%);
+  filter: blur(30px);
+  z-index: -1;
+}
+
+.neon-card {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 0 20px rgba(0, 240, 255, 0.15), inset 0 0 30px rgba(138, 43, 226, 0.05);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.neon-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 0 34px rgba(0, 240, 255, 0.35), inset 0 0 50px rgba(138, 43, 226, 0.08);
+}
+
+.neon-chip {
+  background: linear-gradient(135deg, rgba(0,240,255,.15), rgba(138,43,226,.15));
+  border: 1px solid rgba(255,255,255,.14);
+  color: #dff8ff;
+  text-shadow: 0 0 6px rgba(0, 240, 255, .6);
+}
+.neon-chip:hover {
+  background: linear-gradient(135deg, rgba(0,240,255,.28), rgba(138,43,226,.28));
+  border-color: rgba(255,255,255,.3);
+  box-shadow: 0 0 20px rgba(0,240,255,.3), 0 0 28px rgba(138,43,226,.28);
+}
+.neon-chip.active {
+  background: linear-gradient(135deg, rgba(255,0,212,.35), rgba(0,255,163,.35));
+  border-color: rgba(255,255,255,.4);
+}
+
+/* Simple skeleton shimmer */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.12), rgba(255,255,255,.06));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Fun hover wiggle */
+.wiggle:hover { animation: wiggle .15s ease-in-out; }
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(1.4deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-1.4deg); }
+  100% { transform: rotate(0deg); }
 }
