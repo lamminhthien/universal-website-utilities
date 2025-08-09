@@ -7,7 +7,8 @@ export type Article = {
   publishedAt?: number;
 };
 
-const SOURCES = [
+type Source = { url: string; name: string };
+export const NEWS_SOURCES: Source[] = [
   { url: "https://tuoitre.vn/rss/tin-moi-nhat.rss", name: "Tuổi Trẻ" },
   { url: "https://vnexpress.net/rss/tin-moi-nhat.rss", name: "VnExpress" },
   { url: "https://thanhnien.vn/rss/home.rss", name: "Thanh Niên" },
@@ -53,11 +54,40 @@ function parseRss(xml: string, sourceName: string): Article[] {
   });
 }
 
-export async function fetchVietnamNews(): Promise<Article[]> {
-  const results = await Promise.all(
-    SOURCES.map(async (s) => {
+export async function fetchVietnamNews(options?: { sources?: string[] }): Promise<Article[]> {
+  const wanted = options?.sources?.filter(Boolean) ?? [];
+
+  // Choose sources: if no input or no match, fall back to all
+  const selected = (wanted.length
+    ? NEWS_SOURCES.filter((s) => wanted.includes(s.name) || wanted.includes(s.url))
+    : NEWS_SOURCES);
+
+  const effective = selected.length > 0 ? selected : NEWS_SOURCES;
+
+  // Helper to enforce a timeout per request
+  const fetchWithTimeout = async (input: RequestInfo | URL, init?: RequestInit & { timeoutMs?: number }) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), init?.timeoutMs ?? 10000);
+    try {
+      const res = await fetch(input, {
+        ...init,
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "universal-website-utilities/1.0",
+          ...(init?.headers || {}),
+        },
+        next: { revalidate: 300 },
+      } as RequestInit);
+      return res;
+    } finally {
+      clearTimeout(id);
+    }
+  };
+
+  const settled = await Promise.allSettled(
+    effective.map(async (s) => {
       try {
-        const res = await fetch(s.url, { next: { revalidate: 300 }, headers: { "User-Agent": "universal-website-utilities/1.0" } });
+        const res = await fetchWithTimeout(s.url, { timeoutMs: 10000 });
         const xml = await res.text();
         return parseRss(xml, s.name);
       } catch {
@@ -65,14 +95,20 @@ export async function fetchVietnamNews(): Promise<Article[]> {
       }
     })
   );
-  const flat = results.flat();
+
+  const results = settled.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
+
+  // De-duplicate by title+url
   const seen = new Set<string>();
-  const unique = flat.filter((a) => {
-    const key = a.title + a.url;
+  const unique = results.filter((a) => {
+    const key = `${a.title}|${a.url}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
-    
   });
-  return unique
+
+  // Sort by published time desc when available
+  unique.sort((a, b) => (b.publishedAt ?? 0) - (a.publishedAt ?? 0));
+
+  return unique;
 }
