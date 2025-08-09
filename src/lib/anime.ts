@@ -19,6 +19,7 @@ const query = `
         type: ANIME
         sort: UPDATED_AT_DESC
         isAdult: false
+        genre_in: ["Romance", "Slice of Life"]
       ) {
         id
         siteUrl
