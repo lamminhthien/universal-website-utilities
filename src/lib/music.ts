@@ -1,16 +1,23 @@
-import { searchYouTubePlaylists, type YtPlaylist } from "./youtube";
+import {
+  searchDeezerPlaylists,
+  type DzPlaylist,
+} from "./deezer";
 
-export type MusicPlaylist = YtPlaylist;
+export type MusicPlaylist = DzPlaylist;
 
 export async function fetchRetroPlaylists(): Promise<MusicPlaylist[]> {
   const queries = [
-    "90s eurodance playlist",
-    "90s rock anthems playlist",
-    "90s pop hits playlist",
+    "90s eurodance",
+    "90s rock anthems",
+    "90s pop hits",
   ];
-  const results = await Promise.all(queries.map((q) => searchYouTubePlaylists(q, 2)));
+  const results = await Promise.all(
+    queries.map((q) => searchDeezerPlaylists(q, 2))
+  );
   const flat = results.flat();
   const seen = new Set<string>();
-  const unique = flat.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
+  const unique = flat.filter((p) =>
+    seen.has(p.id) ? false : (seen.add(p.id), true)
+  );
   return unique.slice(0, 6);
 }
