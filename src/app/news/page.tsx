@@ -27,13 +27,6 @@ export default async function NewsPage() {
         {articles.map((a, idx) => (
           <a key={idx} href={a.url} target="_blank" rel="noreferrer" className="block">
             <Card>
-        {a.thumbnail && (
-                <div className="relative w-full h-40 mb-3 overflow-hidden rounded-md">
-          {/* Use a plain img to avoid configuring remote image domains */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={a.thumbnail} alt={a.title} className="w-full h-full object-cover" />
-                </div>
-              )}
               <div className="text-sm text-white/60 mb-1">{a.source}</div>
               <div className="font-semibold mb-1">{a.title}</div>
               {a.description && <p className="text-white/70 text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: a.description }} />}
