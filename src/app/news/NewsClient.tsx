@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Card from "../components/Card";
@@ -46,7 +47,7 @@ export default function NewsClient({ initial }: { initial: Article[] }) {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [hasNext, page, loading]);
+  }, [hasNext, page, loading, loadMore]);
 
   return (
     <div className="space-y-6">
@@ -55,9 +56,20 @@ export default function NewsClient({ initial }: { initial: Article[] }) {
           <a key={idx} href={a.url} target="_blank" rel="noreferrer" className="block">
             <Card>
               <div className="text-sm text-black/60 mb-1">{a.source}</div>
-              <div className="font-semibold mb-1">{a.title}</div>
+              <div className="font-semibold mb-3">{a.title}</div>
+               {/* Inject placeholder if description has no <img> */}
+              {!a.description?.includes("<img") && (
+                <img
+                  src="./news-placeholder-457X274.png"
+                  alt="placeholder"
+                  className="w-full h-full object-cover mb-2 rounded"
+                />
+              )}
               {a.description && (
-                <p className="text-black/70 text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: a.description }} />
+                <p
+                  className="text-black/70 text-sm line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: a.description }}
+                />
               )}
             </Card>
           </a>
