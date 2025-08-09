@@ -28,9 +28,9 @@ export default async function WeatherPage({ searchParams }: { searchParams?: Pro
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold drop-shadow-[0_0_8px_#00ffa3]">Weather Forecast</h1>
+      <h1 className="text-2xl font-bold">Weather Forecast</h1>
       <form className="flex gap-2" action="/weather" method="get">
-        <input name="city" defaultValue={city} placeholder="Enter city (e.g., Ho Chi Minh City)" className="px-3 py-2 rounded-md bg-white/10 border border-white/15 w-64" />
+        <input name="city" defaultValue={city} placeholder="Enter city (e.g., Ho Chi Minh City)" className="px-3 py-2 rounded-md bg-white/10 border border-black/50 w-64" />
         <button className="neon-chip px-4 py-2 rounded-md" type="submit">Search</button>
       </form>
 
@@ -38,7 +38,7 @@ export default async function WeatherPage({ searchParams }: { searchParams?: Pro
         <div className="text-sm text-black/70">City</div>
         <div className="text-xl font-semibold mb-2">{city}</div>
         <div className="text-sm text-black/70">Current temperature</div>
-        <div className="text-3xl font-bold drop-shadow-[0_0_8px_#00f0ff]">{current ?? "-"}°C</div>
+        <div className="text-3xl font-bold drop-shadow-md">{current ?? "-"}°C</div>
       </Card>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

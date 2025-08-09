@@ -31,7 +31,6 @@ export default function WeatherNews() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold drop-shadow-[0_0_8px_#00f0ff]">Tin dự báo thời tiết</h2>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {visible.map((n, i) => (
           <a key={n.url + i} href={n.url} target="_blank" rel="noopener noreferrer" className="block">

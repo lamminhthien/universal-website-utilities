@@ -6,7 +6,7 @@ export default async function AnimePage() {
   const initial = { items, hasNextPage, page: 1, perPage: 12 };
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold drop-shadow-[0_0_8px_#00f0ff]">Anime (Trending)</h1>
+      <h1 className="text-2xl font-bold">Anime (Trending)</h1>
       <AnimeClient initial={initial} />
     </div>
   );
