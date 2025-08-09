@@ -8,9 +8,18 @@ export type Article = {
 };
 
 const SOURCES = [
-  { url: "https://vnexpress.net/rss/tin-moi-nhat.rss", name: "VnExpress" },
   { url: "https://tuoitre.vn/rss/tin-moi-nhat.rss", name: "Tuổi Trẻ" },
-  { url: "https://dantri.com.vn/rss/home.rss", name: "Dân Trí" },
+  { url: "https://vnexpress.net/rss/tin-moi-nhat.rss", name: "VnExpress" },
+  { url: "https://thanhnien.vn/rss/home.rss", name: "Thanh Niên" },
+  { url: "https://nld.com.vn/rss/home.rss", name: "Người Lao Động" },
+  { url: "https://laodong.vn/rss/home.rss", name: "Lao Động" },
+  { url: "https://zingnews.vn/rss.html", name: "Zing News" },
+  { url: "https://vtv.vn/rss/tin-moi-nhat.rss", name: "VTV" },
+  { url: "https://genk.vn/rss/home.rss", name: "GenK" },
+  { url: "https://thanhnien.vn/cong-nghe/rss.html", name: "Thanh Niên - Công nghệ" },
+  { url: "https://vnexpress.net/rss/so-hoa.rss", name: "VnExpress - Số hóa" },
+  { url: "https://cafef.vn/trang-chu.rss", name: "CafeF" },
+  { url: "https://vneconomy.vn/rss.htm", name: "VnEconomy" },
 ];
 
 function extract(tag: string, item: string): string | undefined {
@@ -65,5 +74,5 @@ export async function fetchVietnamNews(): Promise<Article[]> {
     return true;
     
   });
-  return unique.slice(0, 24);
+  return unique
 }

@@ -7,12 +7,11 @@ export type MusicPlaylist = DzPlaylist;
 
 export async function fetchRetroPlaylists(): Promise<MusicPlaylist[]> {
   const queries = [
-    "90s eurodance",
-    "90s rock anthems",
+    "wedding music",
     "90s pop hits",
   ];
   const results = await Promise.all(
-    queries.map((q) => searchDeezerPlaylists(q, 2))
+    queries.map((q) => searchDeezerPlaylists(q, 6))
   );
   const flat = results.flat();
   const seen = new Set<string>();

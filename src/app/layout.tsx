@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#06080f]`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientProviders>
           <div className="min-h-screen flex flex-col neon-bg">
             <Navbar />

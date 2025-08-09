@@ -30,7 +30,7 @@ export default function Navbar() {
                 key={l.href}
                 href={l.href}
                 onMouseEnter={playHover}
-                className={`px-3 py-1.5 rounded-full text-sm transition-all neon-chip ${active ? "active" : ""}`}
+                className={`px-3 py-1.5 rounded-full text-sm transition-all ${active ? "active" : ""}`}
               >
                 {l.label}
               </Link>
