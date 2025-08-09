@@ -1,18 +1,15 @@
 import Card from "../components/Card";
+import { fetchRetroPlaylists } from "@/lib/music";
 
-const PLAYLISTS = [
-  { title: "90s Eurodance Classics", id: "PL2qWn8yaf9I2GfpFh2o5sO3V5OAiC9Z04" },
-  { title: "90s Rock Anthems", id: "PLHdKL16-bG1mHpUMwKExnrGHF7H8x7V7q" },
-  { title: "90s Pop Hits", id: "PLZxZlGl8rG3B0B2C5wUQxR0x2oQv1oVbq" },
-];
-
-export default function RetroMusicPage() {
+export default async function RetroMusicPage() {
+  const lists = await fetchRetroPlaylists();
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold drop-shadow-[0_0_8px_#8a2be2]">Retro 90s Music</h1>
       <div className="grid sm:grid-cols-2 gap-4">
-        {PLAYLISTS.map((p) => (
-          <Card key={p.id}>
+        {lists.length === 0 && <div className="text-white/70">No playlists found right now.</div>}
+        {lists.map((p, i) => (
+          <Card key={p.id + i}>
             <div className="aspect-video w-full rounded-md overflow-hidden">
               <iframe
                 className="w-full h-full"

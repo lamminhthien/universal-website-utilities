@@ -47,6 +47,24 @@ export default async function TravelPage() {
                   <p className="text-sm text-white/70 mt-1 line-clamp-3" dangerouslySetInnerHTML={{ __html: it.description }} />
                 )}
               </a>
+              <div className="mt-3 flex gap-2">
+                <a
+                  className="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 border border-white/10"
+                  href={`https://www.google.com/search?q=${encodeURIComponent(it.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Google
+                </a>
+                <a
+                  className="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 border border-white/10"
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Maps
+                </a>
+              </div>
             </Card>
           );
         })}
