@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Card from "../components/Card";
 import SafeImage from "@/app/components/SafeImage";
 
@@ -19,12 +19,36 @@ export default function AnimeClient({ initial }: { initial: ApiResp }) {
   const [page, setPage] = useState(initial.page);
   const [hasNext, setHasNext] = useState(initial.hasNextPage);
   const [loading, setLoading] = useState(false);
+  const [blocked, setBlocked] = useState<Record<string, boolean>>({});
 
   // Always show latest first
   const sorted = useMemo(
     () => [...items].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)),
     [items]
   );
+
+  // Probe YouTube oEmbed to hide unavailable videos
+  useEffect(() => {
+    const ids = Array.from(new Set(sorted.map((m) => m.trailerId).filter(Boolean) as string[]));
+    let cancelled = false;
+    (async () => {
+      const results: Record<string, boolean> = {};
+      await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const resp = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}&format=json`, { cache: "no-store" });
+            if (!resp.ok) results[id] = true; // mark as blocked/unavailable
+          } catch {
+            results[id] = true;
+          }
+        })
+      );
+      if (!cancelled) setBlocked((prev) => ({ ...prev, ...results }));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sorted]);
 
   async function loadMore() {
     if (loading || !hasNext) return;
@@ -45,7 +69,7 @@ export default function AnimeClient({ initial }: { initial: ApiResp }) {
       <div className="grid sm:grid-cols-2 gap-4">
         {sorted.map((m, i) => (
           <Card key={(m.url || i.toString()) + i}>
-            {m.trailerId && (m.trailerSite || "").toLowerCase() === "youtube" ? (
+            {m.trailerId && (m.trailerSite || "").toLowerCase() === "youtube" && !blocked[m.trailerId] ? (
               <div className="aspect-video w-full rounded-md overflow-hidden">
                 <iframe
                   className="w-full h-full"

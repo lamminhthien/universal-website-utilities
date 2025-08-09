@@ -5,6 +5,7 @@ export type TravelItem = {
   source: string;
   thumbnail?: string;
   categories?: string[];
+  publishedAt?: number;
 };
 
 // A few reputable travel RSS sources.
@@ -47,7 +48,9 @@ function parseRss(xml: string, sourceName: string): TravelItem[] {
     const cats = Array.from(raw.matchAll(/<category>([\s\S]*?)<\/category>/gi)).map((m) =>
       (m[1] || "").replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim()
     );
-    return { title, url, description, source: sourceName, thumbnail, categories: cats } as TravelItem;
+  const pub = extract("pubDate", raw) || extract("published", raw) || extract("dc:date", raw);
+  const publishedAt = pub ? Date.parse(pub) : undefined;
+  return { title, url, description, source: sourceName, thumbnail, categories: cats, publishedAt } as TravelItem;
   });
 }
 
@@ -102,5 +105,7 @@ export async function fetchTravelArticles(): Promise<TravelItem[]> {
     seen.add(key);
     return true;
   });
+  // Sort newest first when available
+  unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
   return unique.slice(0, 24);
 }

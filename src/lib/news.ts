@@ -4,6 +4,7 @@ export type Article = {
   description?: string;
   source: string;
   thumbnail?: string;
+  publishedAt?: number;
 };
 
 const SOURCES = [
@@ -37,7 +38,9 @@ function parseRss(xml: string, sourceName: string): Article[] {
     const url = extract("link", raw) || "#";
     const description = extract("description", raw);
     const thumbnail = extractThumb(raw, description);
-    return { title, url, description, source: sourceName, thumbnail } as Article;
+  const pub = extract("pubDate", raw) || extract("published", raw);
+  const ts = pub ? Date.parse(pub) : undefined;
+  return { title, url, description, source: sourceName, thumbnail, publishedAt: ts } as Article;
   });
 }
 

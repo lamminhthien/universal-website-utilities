@@ -1,4 +1,5 @@
 import Card from "../components/Card";
+import WeatherNews from "./weatherNews";
 
 type Forecast = { time: string[]; temperature_2m: number[] };
 
@@ -48,6 +49,8 @@ export default async function WeatherPage({ searchParams }: { searchParams?: Pro
           </Card>
         ))}
       </div>
+
+  <WeatherNews />
     </div>
   );
 }
