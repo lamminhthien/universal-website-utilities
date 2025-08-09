@@ -13,7 +13,11 @@ const query = `
   query ($page: Int = 1, $perPage: Int = 24) {
     Page(page: $page, perPage: $perPage) {
       pageInfo { hasNextPage }
-      media(type: ANIME, sort: UPDATED_AT_DESC) {
+      media(
+        type: ANIME
+        sort: UPDATED_AT_DESC
+        isAdult: false
+      ) {
         id
         siteUrl
         updatedAt
