@@ -5,9 +5,9 @@ export default async function RetroMusicPage() {
   const lists = await fetchRetroPlaylists();
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold drop-shadow-[0_0_8px_#8a2be2]">Retro 90s Music</h1>
+      <h1 className="text-2xl font-bold drop-shadow-md">Retro 90s Music</h1>
       <div className="grid sm:grid-cols-2 gap-4">
-        {lists.length === 0 && <div className="text-white/70">No playlists found right now.</div>}
+        {lists.length === 0 && <div className="text-black/70">No playlists found right now.</div>}
         {lists.map((p, i) => (
           <Card key={p.id + i}>
             <div className="aspect-video w-full rounded-md overflow-hidden">

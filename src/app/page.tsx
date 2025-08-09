@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold drop-shadow-[0_0_12px_#00f0ff]">Universal Website Utilities</h1>
-      <p className="text-white/70">A colorful hub of mini tools. Dark by default with neon glow and playful interactions.</p>
+      <p className="text-black/70">A colorful hub of mini tools. Dark by default with neon glow and playful interactions.</p>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <LinkCard href="/news" title="Vietnamese News" desc="Latest news aggregated from public sources." />

@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#06080f] text-white`}>        
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#06080f]`}>
         <ClientProviders>
           <div className="min-h-screen flex flex-col neon-bg">
             <Navbar />
@@ -34,7 +34,7 @@ export default function RootLayout({
               {children}
             </main>
             <footer className="border-t border-white/10 backdrop-blur bg-black/20">
-              <div className="container mx-auto px-4 py-6 text-xs text-white/60">
+              <div className="container mx-auto px-4 py-6 text-xs ">
                 © {new Date().getFullYear()} Universal Website Utilities
               </div>
             </footer>

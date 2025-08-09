@@ -17,9 +17,9 @@ export default function Navbar() {
   const { playHover } = useHoverAudio();
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur bg-black/30 border-b border-white/10">
+    <header className="sticky top-0 z-50 backdrop-blur bg-white/30 border-b border-white/10">
       <div className="container mx-auto px-4 h-14 flex items-center gap-4">
-        <Link href="/" className="font-semibold tracking-wide text-white drop-shadow-[0_0_6px_#0ff]">
+        <Link href="/" className="font-semibold tracking-wide text-black drop-shadow-md">
           Universal Utilities
         </Link>
         <nav className="ml-auto flex items-center gap-3 overflow-x-auto">

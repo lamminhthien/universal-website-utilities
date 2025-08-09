@@ -57,7 +57,7 @@ export default function TravelClient() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sorted.length === 0 && (
           <Card>
-            <div className="text-white/80">Đang tải...</div>
+            <div className="text-black/80">Đang tải...</div>
           </Card>
         )}
         {sorted.map((it, i) => {
@@ -77,9 +77,9 @@ export default function TravelClient() {
                   />
                 </div>
                 <div className="font-semibold line-clamp-2">{it.title}</div>
-                <div className="text-xs text-white/60 mt-1">{it.source}</div>
+                <div className="text-xs text-black/60 mt-1">{it.source}</div>
                 {it.description && (
-                  <p className="text-sm text-white/70 mt-1 line-clamp-3" dangerouslySetInnerHTML={{ __html: it.description }} />
+                  <p className="text-sm text-black/70 mt-1 line-clamp-3" dangerouslySetInnerHTML={{ __html: it.description }} />
                 )}
               </a>
               <div className="mt-3 flex gap-2">

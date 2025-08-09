@@ -29,10 +29,10 @@ export default function NewsClient({ initial }: { initial: Article[] }) {
         {sorted.map((a, idx) => (
           <a key={idx} href={a.url} target="_blank" rel="noreferrer" className="block">
             <Card>
-              <div className="text-sm text-white/60 mb-1">{a.source}</div>
+              <div className="text-sm text-black/60 mb-1">{a.source}</div>
               <div className="font-semibold mb-1">{a.title}</div>
               {a.description && (
-                <p className="text-white/70 text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: a.description }} />
+                <p className="text-black/70 text-sm line-clamp-3" dangerouslySetInnerHTML={{ __html: a.description }} />
               )}
             </Card>
           </a>

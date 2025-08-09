@@ -36,7 +36,7 @@ export default function WeatherNews() {
         {visible.map((n, i) => (
           <a key={n.url + i} href={n.url} target="_blank" rel="noopener noreferrer" className="block">
             <Card>
-              <div className="text-sm text-white/60 mb-1">{n.source}</div>
+              <div className="text-sm text-black/60 mb-1">{n.source}</div>
               <div className="font-semibold">{n.title}</div>
             </Card>
           </a>

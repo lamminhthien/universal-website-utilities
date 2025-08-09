@@ -68,7 +68,7 @@ export default function AnimeClient({ initial }: { initial: ApiResp }) {
               </div>
               {m.description ? (
                 <p
-                  className="text-sm text-white/80 mt-1 line-clamp-4"
+                  className="text-sm text-black/80 mt-1 line-clamp-4"
                   dangerouslySetInnerHTML={{ __html: m.description }}
                 />
               ) : null}
@@ -86,7 +86,7 @@ export default function AnimeClient({ initial }: { initial: ApiResp }) {
             {loading ? "Loading..." : "Load more"}
           </button>
         ) : (
-          <div className="text-white/50 text-sm">No more results.</div>
+          <div className="text-black/50 text-sm">No more results.</div>
         )}
       </div>
     </div>

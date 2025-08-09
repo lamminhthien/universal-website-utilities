@@ -35,16 +35,16 @@ export default async function WeatherPage({ searchParams }: { searchParams?: Pro
       </form>
 
       <Card>
-        <div className="text-sm text-white/70">City</div>
+        <div className="text-sm text-black/70">City</div>
         <div className="text-xl font-semibold mb-2">{city}</div>
-        <div className="text-sm text-white/70">Current temperature</div>
+        <div className="text-sm text-black/70">Current temperature</div>
         <div className="text-3xl font-bold drop-shadow-[0_0_8px_#00f0ff]">{current ?? "-"}°C</div>
       </Card>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {hourly.time.slice(0, 12).map((t, i) => (
           <Card key={t}>
-            <div className="text-sm text-white/60">{new Date(t).toLocaleString()}</div>
+            <div className="text-sm text-black/60">{new Date(t).toLocaleString()}</div>
             <div className="text-2xl font-semibold">{hourly.temperature_2m[i]}°C</div>
           </Card>
         ))}

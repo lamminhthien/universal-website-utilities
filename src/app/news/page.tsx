@@ -17,7 +17,7 @@ export default async function NewsPage() {
   const articles = await fetchFirstPage();
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold drop-shadow-[0_0_8px_#8a2be2]">Tin tức Việt Nam</h1>
+      <h1 className="text-2xl font-bold drop-shadow-md">Tin tức Việt Nam</h1>
       <NewsClient initial={articles} />
     </div>
   );

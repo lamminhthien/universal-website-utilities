@@ -16,7 +16,7 @@ export default async function CartoonsPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold drop-shadow-[0_0_8px_#00ffa3]">Retro/Nostalgic Cartoons</h1>
       <div className="grid sm:grid-cols-2 gap-4">
-        {videos.length === 0 && <div className="text-white/70">No videos found right now.</div>}
+        {videos.length === 0 && <div className="text-black/70">No videos found right now.</div>}
         {videos.map((v) => (
           <Card key={v.id}>
             <div className="aspect-video w-full rounded-md overflow-hidden">
